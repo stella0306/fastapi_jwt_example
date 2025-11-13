@@ -1,9 +1,9 @@
 import jwt
 from datetime import datetime, timedelta, timezone
-from core.config.settings import settings
+from core.config.environment.environment_config import environment_config
 
 # Access / Refresh 토큰 발급 및 검증
-class JWTService:
+class JWTProvider:
 
     @staticmethod
     # Access Token 생성
@@ -11,10 +11,10 @@ class JWTService:
         payload = {
             "sub": user_id,
             "exp": datetime.now(timezone.utc) + timedelta(
-                hours=settings.access_token_expire
+                hours=environment_config.access_token_expire
             )
         }
-        return jwt.encode(payload, settings.jwt_secret, algorithm=settings.jwt_algorithm)
+        return jwt.encode(payload, environment_config.jwt_secret, algorithm=environment_config.jwt_algorithm)
 
     # Refresh Token 생성
     @staticmethod
@@ -22,11 +22,11 @@ class JWTService:
         payload = {
             "sub": user_id,
             "exp": datetime.now(timezone.utc) + timedelta(
-                hours=settings.refresh_token_expire
+                hours=environment_config.refresh_token_expire
             )
         }
         
-        return jwt.encode(payload=payload, key=settings.jwt_secret, algorithm=settings.jwt_algorithm)
+        return jwt.encode(payload=payload, key=environment_config.jwt_secret, algorithm=environment_config.jwt_algorithm)
 
     # JWT 검증
     @staticmethod
@@ -34,8 +34,8 @@ class JWTService:
         try:
             payload = jwt.decode(
                 jwt=token,
-                key=settings.jwt_secret,
-                algorithms=[settings.jwt_algorithm],
+                key=environment_config.jwt_secret,
+                algorithms=[environment_config.jwt_algorithm],
             )
             return payload
         

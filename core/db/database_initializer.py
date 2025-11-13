@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from core.db.database import Database
 from core.db.base import Base
-from core.config.logger_config import LoggerConfig
+from core.config.logging.logger_config import LoggerConfig
 
 # DB 초기화 및 연결 검증을 담당하는 클래스
 class DatabaseInitializer:

@@ -6,7 +6,8 @@ from typing import Final
 # .env 파일 로드
 load_dotenv()
 
-class Settings(BaseModel):
+# 실행 환경 설정
+class EnvironmentConfig(BaseModel):
     # JWT 정의
     jwt_secret: str = os.getenv("JWT_SECRET", "devsecret")
     jwt_algorithm: str = os.getenv("JWT_ALGORITHM", "HS256")
@@ -26,4 +27,4 @@ class Settings(BaseModel):
         return f"mysql+asyncmy://{self.db_user}:{self.db_password}@{self.db_host}:{self.db_port}/{self.db_name}?charset=utf8mb4"
 
 # 불변 객체 생성
-settings: Final[Settings] = Settings()
+environment_config: Final[EnvironmentConfig] = EnvironmentConfig()

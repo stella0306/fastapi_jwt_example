@@ -4,7 +4,7 @@ from fastapi.exceptions import RequestValidationError
 from pydantic import ValidationError
 from sqlalchemy.exc import IntegrityError, OperationalError
 from starlette.exceptions import HTTPException as StarletteHTTPException
-from core.config.logger_config import LoggerConfig
+from core.config.logging.logger_config import LoggerConfig
 
 
 # FastAPI 전역 예외 처리 클래스

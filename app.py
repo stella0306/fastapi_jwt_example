@@ -1,7 +1,7 @@
 import uvicorn
 from fastapi import FastAPI
 from core.db.database_initializer import DatabaseInitializer
-from core.config.logger_config import LoggerConfig
+from core.config.logging.logger_config import LoggerConfig
 from core.exception.core_exception_handler import CoreExceptionHandler
 from core.middleware.cors_middleware_config import CORSMiddlewareConfig
 from domain.user.controller.oauth_controller import OauthController

@@ -6,7 +6,7 @@ from domain.user.dto.request.signin_dto_request import SigninDtoRequest
 from domain.user.service.impl.oauth_service_impl import OauthServiceImpl
 from core.db.database import Database
 from core.security.cookie.cookie_util import CookieUtil
-from core.config.settings import settings
+from core.config.environment.environment_config import environment_config
 
 # 사용자 라우터 구현
 class OauthController:
@@ -63,7 +63,7 @@ class OauthController:
             http_only=True,
             secure=True,
             same_site="strict",
-            max_age=60 * 60 * 24 * settings.refresh_token_expire,
+            max_age=60 * 60 * 24 * environment_config.refresh_token_expire,
             path="/"
         )
         

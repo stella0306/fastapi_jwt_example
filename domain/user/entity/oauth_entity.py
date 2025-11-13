@@ -1,7 +1,7 @@
 from sqlalchemy import Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 from core.db.base import Base
-from core.config.logger_config import LoggerConfig
+from core.config.logging.logger_config import LoggerConfig
 
 # 로거 생성
 logger = LoggerConfig.get_logger("domain.entity.user_entity")

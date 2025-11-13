@@ -2,8 +2,8 @@ import uuid
 import re
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException, status, Header
-from core.security.jwt.jwt_service import JWTService
-from core.security.password.password_service import PasswordService
+from core.security.jwt.jwt_provider import JWTProvider
+from core.security.password.password_encoder import PasswordEncoder
 from domain.user.service.oauth_service import OauthService
 from domain.user.entity.oauth_entity import OauthEntity
 from domain.user.repository.oauth_repository import OauthRepository
@@ -45,7 +45,7 @@ class OauthServiceImpl(OauthService):
             )
         
         # 비밀번호 암호화
-        hasd_password = PasswordService.hash_password(password=dto.password)
+        hasd_password = PasswordEncoder.hash_password(password=dto.password)
         
         # 사용자 생성
         user = OauthEntity(
@@ -82,15 +82,15 @@ class OauthServiceImpl(OauthService):
             )
 
         # 비밀번호 검증
-        if not PasswordService.verify_password(plain_password=dto.password, hashed_password=user.password):
+        if not PasswordEncoder.verify_password(plain_password=dto.password, hashed_password=user.password):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="비밀번호가 일치하지 않습니다."
             )
 
         # JWT 토큰 생성 (로그인 성공 시)
-        access_token = JWTService.create_access_token(user_id=user.user_id)
-        refresh_token = JWTService.create_refresh_token(user_id=user.user_id)
+        access_token = JWTProvider.create_access_token(user_id=user.user_id)
+        refresh_token = JWTProvider.create_refresh_token(user_id=user.user_id)
 
         # DB에 토큰 저장 또는 업데이트
         await OauthRepository.update_tokens(
@@ -119,7 +119,7 @@ class OauthServiceImpl(OauthService):
     async def refresh_token(refresh_token: str, session: AsyncSession) -> RefreshTokenDtoResponse:
         
         # Refresh Token 검증
-        payload = JWTService.verify_token(refresh_token)
+        payload = JWTProvider.verify_token(refresh_token)
         user_id = payload.get("sub", None)
         
         if not user_id:
@@ -145,7 +145,7 @@ class OauthServiceImpl(OauthService):
             )
 
         # 새로운 Access Token 생성
-        new_access_token = JWTService.create_access_token(user_id=user.user_id)
+        new_access_token = JWTProvider.create_access_token(user_id=user.user_id)
 
         # DB에 Access Token 업데이트
         await OauthRepository.update_tokens(
