@@ -22,7 +22,7 @@ class JWTProvider:
         payload = {
             "sub": user_id,
             "exp": datetime.now(timezone.utc) + timedelta(
-                hours=environment_config.refresh_token_expire
+                days=environment_config.refresh_token_expire
             )
         }
         
