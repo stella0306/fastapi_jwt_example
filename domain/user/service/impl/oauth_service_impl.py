@@ -3,7 +3,7 @@ import re
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException, status, Header
 from core.security.jwt.jwt_provider import JWTProvider
-from core.security.password.password_encoder import PasswordEncoder
+from core.security.password.argon2_password_hasher import Argon2PasswordHasher
 from domain.user.service.oauth_service import OauthService
 from domain.user.entity.oauth_entity import OauthEntity
 from domain.user.repository.oauth_repository import OauthRepository
@@ -45,7 +45,7 @@ class OauthServiceImpl(OauthService):
             )
         
         # 비밀번호 암호화
-        hasd_password = PasswordEncoder.hash_password(password=dto.password)
+        hasd_password = Argon2PasswordHasher.hash_password(password=dto.password)
         
         # 사용자 생성
         user = OauthEntity(
@@ -82,7 +82,7 @@ class OauthServiceImpl(OauthService):
             )
 
         # 비밀번호 검증
-        if not PasswordEncoder.verify_password(plain_password=dto.password, hashed_password=user.password):
+        if not Argon2PasswordHasher.verify_password(plain_password=dto.password, hashed_password=user.password):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="비밀번호가 일치하지 않습니다."

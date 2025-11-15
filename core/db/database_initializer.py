@@ -1,8 +1,10 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
+from typing import AsyncGenerator
 from core.db.database import Database
 from core.db.base import Base
 from core.config.logging.logger_config import LoggerConfig
+
 
 # DB 초기화 및 연결 검증을 담당하는 클래스
 class DatabaseInitializer:
@@ -12,7 +14,7 @@ class DatabaseInitializer:
 
     @staticmethod
     @asynccontextmanager
-    async def db_lifespan(app: FastAPI):
+    async def db_lifespan(app: FastAPI) -> AsyncGenerator[None]: # app는 FastAPI가 실행될 때 자동으로 보내주는 값
         DatabaseInitializer.logger.info("데이터베이스 초기화 시작")
 
         try:

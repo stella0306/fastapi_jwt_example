@@ -14,7 +14,7 @@ class JWTProvider:
                 hours=environment_config.access_token_expire
             )
         }
-        return jwt.encode(payload, environment_config.jwt_secret, algorithm=environment_config.jwt_algorithm)
+        return jwt.encode(payload=payload, key=environment_config.jwt_secret, algorithm=environment_config.jwt_algorithm)
 
     # Refresh Token 생성
     @staticmethod
@@ -35,7 +35,7 @@ class JWTProvider:
             payload = jwt.decode(
                 jwt=token,
                 key=environment_config.jwt_secret,
-                algorithms=[environment_config.jwt_algorithm],
+                algorithms=environment_config.jwt_algorithm,
             )
             return payload
         
