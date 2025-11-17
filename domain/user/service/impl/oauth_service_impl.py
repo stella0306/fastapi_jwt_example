@@ -75,6 +75,8 @@ class OauthServiceImpl(OauthService):
         # 사용자 조회
         user = await OauthRepository.find_by_email(session=session, email=dto.email)
         
+        refresh_token = user.refresh_token
+        
         if not user:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -89,9 +91,19 @@ class OauthServiceImpl(OauthService):
             )
 
         # JWT 토큰 생성 (로그인 성공 시)
+        # 기존에는 refresh_token도 함께 업데이트했으나, 이제는 기존 refresh_token을 그대로 유지한다.
         access_token = JWTProvider.create_access_token(user_id=user.user_id)
-        refresh_token = JWTProvider.create_refresh_token(user_id=user.user_id)
-
+        refresh_token = user.refresh_token
+        
+        # refresh_token 유효성 체크
+        try:
+            JWTProvider.verify_token(token=refresh_token)
+            # 유효하면 그대로 사용
+            
+        except ValueError:
+            # 만료 또는 유효하지 않으면 새로 생성
+            refresh_token = JWTProvider.create_refresh_token(user_id=user.user_id)
+            
         # DB에 토큰 저장 또는 업데이트
         await OauthRepository.update_tokens(
             session=session,
