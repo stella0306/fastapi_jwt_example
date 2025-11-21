@@ -63,7 +63,6 @@ class OauthServiceImpl(OauthService):
 
         # 응답 dto 객체 생성
         response = SignupDtoResponse(
-            # id=saved_user.id,
             user_id=saved_user.user_id,
             username=saved_user.username,
             password=saved_user.password,
@@ -126,7 +125,6 @@ class OauthServiceImpl(OauthService):
         
         # 응답 dto 생성
         response = SigninDtoResponse(
-            # id=update_user.id,
             user_id=update_user.user_id,
             username=update_user.username,
             email=update_user.email,
@@ -153,7 +151,6 @@ class OauthServiceImpl(OauthService):
             max_age=60 * 60 * 24 * environment_config.refresh_token_expire,
             path="/"
         )
-        
         
         # Response 반환
         return json_response
@@ -211,12 +208,10 @@ class OauthServiceImpl(OauthService):
         
         # 응답 Dto 생성
         response = RefreshTokenDtoResponse(
-            # id=update_user.id,
             user_id=update_user.user_id,
             username=update_user.username,
             email=update_user.email,
             access_token=update_user.access_token,
-            # refresh_token=update_user.refresh_token,
             status_code=status.HTTP_200_OK
         ).model_dump()
         
