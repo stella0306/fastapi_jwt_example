@@ -1,7 +1,8 @@
 import uuid
 import re
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import HTTPException, status, Header
+from fastapi import HTTPException, status, Header, Request
+from fastapi.responses import JSONResponse
 from core.security.jwt.jwt_provider import JWTProvider
 from core.security.password.argon2_password_hasher import Argon2PasswordHasher
 from domain.user.service.oauth_service import OauthService
@@ -12,13 +13,15 @@ from domain.user.dto.request.signin_dto_request import SigninDtoRequest
 from domain.user.dto.response.signup_dto_response import SignupDtoResponse
 from domain.user.dto.response.signin_dto_response import SigninDtoResponse
 from domain.user.dto.response.refresh_token_dto_response import RefreshTokenDtoResponse
+from core.config.environment.environment_config import environment_config
+from core.security.cookie.cookie_util import CookieUtil
 
 
 class OauthServiceImpl(OauthService):
     
     # 회원가입 기능
     @staticmethod
-    async def signup(dto: SignupDtoRequest, session: AsyncSession) -> SignupDtoResponse:
+    async def signup(dto: SignupDtoRequest, session: AsyncSession) -> JSONResponse:
         
         # 사용자 고유 ID 생성
         user_id = str(uuid.uuid4())
@@ -58,8 +61,8 @@ class OauthServiceImpl(OauthService):
         # DB에 저장
         saved_user = await OauthRepository.save(session=session, user=user)
 
-        # DTO 반환
-        return SignupDtoResponse(
+        # 응답 dto 객체 생성
+        response = SignupDtoResponse(
             # id=saved_user.id,
             user_id=saved_user.user_id,
             username=saved_user.username,
@@ -67,10 +70,16 @@ class OauthServiceImpl(OauthService):
             email=saved_user.email,
             status_code=status.HTTP_200_OK
             ).model_dump()
+        
+        # Response 반환
+        return JSONResponse(
+            content=response,
+            status_code=response.get("status_code", 500)
+        )
     
     # 로그인 기능
     @staticmethod
-    async def signin(dto: SigninDtoRequest, session: AsyncSession) -> SigninDtoResponse:
+    async def signin(dto: SigninDtoRequest, session: AsyncSession) -> JSONResponse:
         
         # 사용자 조회
         user = await OauthRepository.find_by_email(session=session, email=dto.email)
@@ -115,8 +124,8 @@ class OauthServiceImpl(OauthService):
         # 다시 조회
         update_user = await OauthRepository.find_by_user_id(session=session, user_id=user.user_id)
         
-        # 응답 DTO 반환
-        return SigninDtoResponse(
+        # 응답 dto 생성
+        response = SigninDtoResponse(
             # id=update_user.id,
             user_id=update_user.user_id,
             username=update_user.username,
@@ -125,10 +134,40 @@ class OauthServiceImpl(OauthService):
             refresh_token=update_user.refresh_token,
             status_code=status.HTTP_200_OK
         ).model_dump()
+        
+        
+        # Response 객체 생성
+        json_response = JSONResponse(
+            content=response,
+            status_code=response.get("status_code", 500)
+        )
+        
+        # 쿠키 설정
+        CookieUtil.set_cookie(
+            response=json_response,
+            key="refresh_token",
+            value=response["refresh_token"],
+            http_only=True,
+            secure=True,
+            same_site="strict",
+            max_age=60 * 60 * 24 * environment_config.refresh_token_expire,
+            path="/"
+        )
+        
+        
+        # Response 반환
+        return json_response
 
     # 토큰 재발급
     @staticmethod
-    async def refresh_token(refresh_token: str, session: AsyncSession) -> RefreshTokenDtoResponse:
+    async def refresh_token(request: Request, session: AsyncSession) -> JSONResponse:
+        
+        # 쿠키에서 토큰 가져오기
+        refresh_token = CookieUtil.get_cookie(request=request, key="refresh_token")
+
+        # 토큰 검사
+        if refresh_token is None:
+            raise ValueError("Refresh token이가 cookie에 없습니다.")
         
         # Refresh Token 검증
         payload = JWTProvider.verify_token(refresh_token)
@@ -170,8 +209,8 @@ class OauthServiceImpl(OauthService):
         # 다시 조회
         update_user = await OauthRepository.find_by_user_id(session=session, user_id=user.user_id)
         
-        # 응답 DTO 반환
-        return RefreshTokenDtoResponse(
+        # 응답 Dto 생성
+        response = RefreshTokenDtoResponse(
             # id=update_user.id,
             user_id=update_user.user_id,
             username=update_user.username,
@@ -180,3 +219,9 @@ class OauthServiceImpl(OauthService):
             # refresh_token=update_user.refresh_token,
             status_code=status.HTTP_200_OK
         ).model_dump()
+        
+        # Response 반환
+        return JSONResponse(
+            content=response,
+            status_code=response.get("status_code", 500)
+        )
