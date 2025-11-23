@@ -5,8 +5,8 @@ from core.config.environment.environment_config import environment_config
 # Access / Refresh 토큰 발급 및 검증
 class JWTProvider:
 
-    @staticmethod
     # Access Token 생성
+    @staticmethod
     def create_access_token(user_id: str) -> str:
         payload = {
             "sub": user_id,
@@ -35,7 +35,7 @@ class JWTProvider:
             payload = jwt.decode(
                 jwt=token,
                 key=environment_config.jwt_secret,
-                algorithms=environment_config.jwt_algorithm,
+                algorithms=[environment_config.jwt_algorithm],
             )
             return payload
         

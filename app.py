@@ -4,7 +4,8 @@ from core.db.database_initializer import DatabaseInitializer
 from core.config.logging.logger_config import LoggerConfig
 from core.exception.core_exception_handler import CoreExceptionHandler
 from core.middleware.cors_middleware_config import CORSMiddlewareConfig
-from domain.user.controller.oauth_controller import OauthController
+from domain.user.controller.oauth.oauth_controller import OauthController
+from domain.user.controller.profile.profile_controller import ProfileController
 
 # 로거 생성
 logger = LoggerConfig.get_logger("app")
@@ -21,10 +22,12 @@ CoreExceptionHandler.register(app=app)
 CORSMiddlewareConfig.register(app=app)
 
 # 컨트롤러 인스턴스 생성
-user_controller = OauthController()
+oauth_controller = OauthController()
+profile_controller = ProfileController()
 
 # 라우터 등록
-app.include_router(router=user_controller.router, prefix="/api")
+app.include_router(router=oauth_controller.router, prefix="/api")
+app.include_router(router=profile_controller.router, prefix="/api")
 
 if __name__ == "__main__":
     logger.info("FastAPI 서버를 시작합니다...")

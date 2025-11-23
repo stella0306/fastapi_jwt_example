@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, Header, Request
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
-from domain.user.dto.request.signup_dto_request import SignupDtoRequest
-from domain.user.dto.request.signin_dto_request import SigninDtoRequest 
-from domain.user.service.impl.oauth_service_impl import OauthServiceImpl
+from domain.user.dto.request.oauth.signup_dto_request import SignupDtoRequest
+from domain.user.dto.request.oauth.signin_dto_request import SigninDtoRequest 
+from domain.user.service.impl.oauth.oauth_service_impl import OauthServiceImpl
 from core.db.database import Database
 
 # 사용자 라우터 구현
@@ -11,7 +11,7 @@ class OauthController:
     def __init__(self):
         
         # 라우터 인스턴스 셍성
-        self.router = APIRouter(prefix="/oauth", tags=["Auth"])
+        self.router = APIRouter(prefix="/oauth", tags=["user"])
         
         # 라우터 등록
         self.router.add_api_route(

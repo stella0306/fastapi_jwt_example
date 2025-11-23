@@ -5,14 +5,14 @@ from fastapi import HTTPException, status, Header, Request
 from fastapi.responses import JSONResponse
 from core.security.jwt.jwt_provider import JWTProvider
 from core.security.password.argon2_password_hasher import Argon2PasswordHasher
-from domain.user.service.oauth_service import OauthService
-from domain.user.entity.oauth_entity import OauthEntity
-from domain.user.repository.oauth_repository import OauthRepository
-from domain.user.dto.request.signup_dto_request import SignupDtoRequest
-from domain.user.dto.request.signin_dto_request import SigninDtoRequest
-from domain.user.dto.response.signup_dto_response import SignupDtoResponse
-from domain.user.dto.response.signin_dto_response import SigninDtoResponse
-from domain.user.dto.response.refresh_token_dto_response import RefreshTokenDtoResponse
+from domain.user.service.oauth.oauth_service import OauthService
+from domain.user.entity.oauth.oauth_entity import OauthEntity
+from domain.user.repository.oauth.oauth_repository import OauthRepository
+from domain.user.dto.request.oauth.signup_dto_request import SignupDtoRequest
+from domain.user.dto.request.oauth.signin_dto_request import SigninDtoRequest
+from domain.user.dto.response.oauth.signup_dto_response import SignupDtoResponse
+from domain.user.dto.response.oauth.signin_dto_response import SigninDtoResponse
+from domain.user.dto.response.oauth.refresh_token_dto_response import RefreshTokenDtoResponse
 from core.config.environment.environment_config import environment_config
 from core.security.cookie.cookie_util import CookieUtil
 

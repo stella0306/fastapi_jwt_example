@@ -4,9 +4,9 @@ from core.db.base import Base
 from core.config.logging.logger_config import LoggerConfig
 
 # 로거 생성
-logger = LoggerConfig.get_logger("domain.entity.user_entity")
+logger = LoggerConfig.get_logger("domain.entity.base_entity")
 
-class OauthEntity(Base):
+class BaseEntity(Base):
     # DB 테이블명 정의
     __tablename__ = "fastapi_jwt_example"
 
