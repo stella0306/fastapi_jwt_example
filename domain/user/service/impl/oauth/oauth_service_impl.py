@@ -54,6 +54,7 @@ class OauthServiceImpl(OauthService):
         user = OauthEntity(
             user_id=user_id,
             username=dto.username,
+            bio=dto.bio,
             email=dto.email,
             password=hasd_password,
             )
@@ -64,9 +65,6 @@ class OauthServiceImpl(OauthService):
         # 응답 dto 객체 생성
         response = SignupDtoResponse(
             user_id=saved_user.user_id,
-            username=saved_user.username,
-            password=saved_user.password,
-            email=saved_user.email,
             status_code=status.HTTP_200_OK
             ).model_dump()
         
@@ -126,10 +124,7 @@ class OauthServiceImpl(OauthService):
         # 응답 dto 생성
         response = SigninDtoResponse(
             user_id=update_user.user_id,
-            username=update_user.username,
-            email=update_user.email,
             access_token=update_user.access_token,
-            refresh_token=update_user.refresh_token,
             status_code=status.HTTP_200_OK
         ).model_dump()
         
@@ -144,7 +139,7 @@ class OauthServiceImpl(OauthService):
         CookieUtil.set_cookie(
             response=json_response,
             key="refresh_token",
-            value=response["refresh_token"],
+            value=update_user.refresh_token, # refresh token 쿠키에 저장
             http_only=True,
             secure=True,
             same_site="strict",

@@ -16,6 +16,7 @@ class BaseEntity(Base):
     username: Mapped[str] = mapped_column(String(length=1000), nullable=False, unique=False) # 사용자 이름
     email: Mapped[str] = mapped_column(String(length=1000), nullable=False, unique=True) # 이메일
     password: Mapped[str] = mapped_column(String(length=1000), nullable=False) # 비밀번호 (암호화된 값)
+    bio: Mapped[str] = mapped_column(String(length=1000), nullable=False, unique=False) # 사용자 소개
     
     # JWT 토큰
     access_token: Mapped[str] = mapped_column(String(length=1000), nullable=True)           # Access Token
