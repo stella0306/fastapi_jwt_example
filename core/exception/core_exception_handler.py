@@ -52,7 +52,7 @@ class CoreExceptionHandler:
                 status_code=status.HTTP_409_CONFLICT,
                 content={
                     "status": "CONFLICT",
-                    "message": "데이터베이스 무결성 위반: 이미 존재하는 데이터입니다.",
+                    "message": "데이터베이스에 이미 존재하는 데이터입니다.",
                 },
             )
 
