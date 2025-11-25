@@ -6,6 +6,7 @@ from core.config.logging.logger_config import LoggerConfig
 # 로거 생성
 logger = LoggerConfig.get_logger("domain.entity.base_entity")
 
+# DB Table 분리를 위한 base_entity는 추후에 삭제
 class BaseEntity(Base):
     # DB 테이블명 정의
     __tablename__ = "fastapi_jwt_example"
